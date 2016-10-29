@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lercher.React.Server", "Lercher.React.Server\Lercher.React.Server.csproj", "{874AB319-95D3-42B7-85E6-F23A0EFDC9AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lercher.ReactJS.Core", "Lercher.ReactJS.Core\Lercher.ReactJS.Core.csproj", "{209E1DFE-A40D-4FFC-8C9A-4EF25951360B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lercher.ReactJS.Host", "Lercher.ReactJS.Host\Lercher.ReactJS.Host.csproj", "{43613B54-0E78-47D6-9DD8-BD3D9F4AD5E2}"
+EndProject
 Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
@@ -18,6 +22,14 @@ Global
 		{874AB319-95D3-42B7-85E6-F23A0EFDC9AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{874AB319-95D3-42B7-85E6-F23A0EFDC9AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{874AB319-95D3-42B7-85E6-F23A0EFDC9AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{209E1DFE-A40D-4FFC-8C9A-4EF25951360B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{209E1DFE-A40D-4FFC-8C9A-4EF25951360B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{209E1DFE-A40D-4FFC-8C9A-4EF25951360B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{209E1DFE-A40D-4FFC-8C9A-4EF25951360B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43613B54-0E78-47D6-9DD8-BD3D9F4AD5E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43613B54-0E78-47D6-9DD8-BD3D9F4AD5E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43613B54-0E78-47D6-9DD8-BD3D9F4AD5E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43613B54-0E78-47D6-9DD8-BD3D9F4AD5E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
