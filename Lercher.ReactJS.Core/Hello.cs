@@ -14,11 +14,14 @@ namespace Lercher.ReactJS.Core
         {
             Console.WriteLine("Hello from Core");
             ThreadPool.SetMinThreads(8, 200);
-            var sm = new ScriptManager();
-            sm.AddScriptContent("var sm = 3;");
+            var sl = new ScriptLoader();
+            sl.AddUrl("https://unpkg.com/react@15/dist/react.min.js");
+            sl.AddUrl("https://unpkg.com/react-dom@15/dist/react-dom.min.js");
+            var sm = sl.WaitForScriptManager();
+            sm.AddScriptContent("var sm = 3; var square = ( a => a*a );", "", 100);
             using (var pool = new JsEnginePool(sm))
             {
-                int n = 100;
+                int n = 10;
                 var cd = new CountdownEvent(n);
                 for (var i = 0; i < n; i++)
                 {

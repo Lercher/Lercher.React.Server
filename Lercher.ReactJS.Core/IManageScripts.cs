@@ -7,7 +7,7 @@ namespace Lercher.ReactJS.Core
 {
     public interface IManageScripts
     {
-        IEnumerable<string> Scripts { get; }
+        IEnumerable<ScriptManagerItem> Scripts { get; }
         void Close();
     }
 }

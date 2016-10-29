@@ -64,7 +64,7 @@ namespace Lercher.ReactJS.Core
             var e = new JsEngine(this, nn);
             foreach (var s in ScriptManager.Scripts)
             {
-                e.Execute(s);
+                e.Execute(s.Code, s.Name);
             }
             return e;
         }

@@ -19,14 +19,14 @@ namespace Lercher.ReactJS.Core
             SerialNumber = nr;
         }
 
-        internal void Execute(string script)
+        internal void Execute(string script, string name)
         {
-            engine.Execute(script);
+            engine.Execute(name, script);
         }
 
         public void Calc2(int i)
         {
-            var o = engine.Evaluate("1+1+sm");
+            var o = engine.Evaluate("ReactDOM.render.toString() //1+1+sm+square(4)");
             Console.WriteLine("Engine #{0,-3} Thread {3,-3} Request #{2,-3} says {1}.", SerialNumber, o, i, Thread.CurrentThread.ManagedThreadId);
         }
 
