@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
-using Microsoft.ClearScript.V8;
+
+// TODO: We need a Hash over all the script sources after freezing. 
+// Note: This is not a direct requirement for compiling and rendering react code, but for it's intended use case, 
+// where we need to know if some rendered UI is built from identical sources.
 
 namespace Lercher.ReactJS.Core
 {
@@ -38,8 +41,7 @@ namespace Lercher.ReactJS.Core
                 AddScriptContent(script, "resource:" + filename, sequence);
             }
         }
-
-
+        
         void IListScripts.Freeze()
         {
             frozen = true;
