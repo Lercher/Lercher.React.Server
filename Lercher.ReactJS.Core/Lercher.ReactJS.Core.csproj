@@ -49,13 +49,13 @@
     <Compile Include="Component.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="Hello.cs" />
-    <Compile Include="IManageScripts.cs" />
+    <Compile Include="IListScripts.cs" />
     <Compile Include="JsEngine.cs" />
     <Compile Include="JsEnginePool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptLoader.cs" />
-    <Compile Include="ScriptManager.cs" />
-    <Compile Include="ScriptManagerItem.cs" />
+    <Compile Include="ScriptRepository.cs" />
+    <Compile Include="ScriptItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Licenses\ClearScript.main.license" />
@@ -64,6 +64,12 @@
     <None Include="Licenses\v8.v8.license" />
     <None Include="Licenses\v8.valgrind.license" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\JSX.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\ArrayConverter.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

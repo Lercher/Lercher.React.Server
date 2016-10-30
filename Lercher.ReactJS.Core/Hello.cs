@@ -12,6 +12,25 @@ namespace Lercher.ReactJS.Core
     {
         public static void SayHello()
         {
+            Console.WriteLine("Hello from Core");
+
+
+            var JSX = "var HelloWorld = React.createClass({  render() { return (<div>Hello {this.props.name}!</div>); }  });";
+            Console.WriteLine("Compiling {0} ...", JSX);
+            var babel = new ScriptLoader();
+            babel.AddUrl("https://unpkg.com/babel-standalone@6/babel.min.js");
+            babel.AddUrl("https://unpkg.com/babel-polyfill@6/dist/polyfill.min.js");
+            var babelRepository = babel.GetRepository();
+            babelRepository.AddAssetResource("ArrayConverter.js", 100); // function convertToJsArray(host)
+            babelRepository.AddAssetResource("JSX.js", 101); // function transformCode(code, url), function transformCode__2()
+            using (var babelPool = new JsEnginePool(babelRepository))
+            using (var e = babelPool.Engine)
+            {
+                var compiled = e.Evaluate("transformCode", JSX);
+                Console.WriteLine(compiled);
+            }
+
+
             /* For JSX see https://gist.github.com/zpao/7f3f2063c3c2a39132e3 , https://github.com/babel/babel-standalone 
              * and https://github.com/facebook/react/issues/5497
              * all these use babel-standalone and even the babl REPL Website https://babeljs.io/repl
@@ -19,26 +38,19 @@ namespace Lercher.ReactJS.Core
              * We need the function transformCode(code, url) from the gist as well as the var babelOpts, see below
              */
             var c = "\"use strict\"; var HelloWorld = React.createClass({ displayName: \"HelloWorld\",  render: function render() { return React.createElement(\"div\", null, \"Hello \", this.props.name, \"!\"); } }); ";
-            var cJSX = "var HelloWorld = React.createClass({  render() { return (<div>Hello {this.props.name}!</div>); }  });";
-            Console.WriteLine("Hello from Core");
-            ThreadPool.SetMinThreads(8, 200);
             var sl = new ScriptLoader();
             sl.AddUrl("https://unpkg.com/react@15/dist/react.min.js");
             sl.AddUrl("https://unpkg.com/react-dom@15/dist/react-dom.min.js");
             sl.AddUrl("https://unpkg.com/react-dom@15/dist/react-dom-server.min.js");
-
-            // TODO: babel is only needed for compiling JSX scripts. We shall do this with a different JsEnginePool and inject only the result scripts.
-            // For now we only _load_ standalone-babel.
-            sl.AddUrl("https://unpkg.com/babel-standalone@6/babel.min.js");
-            sl.AddUrl("https://unpkg.com/babel-polyfill@6/dist/polyfill.min.js");
-
-            var sm = sl.WaitForScriptManager();
-            sm.AddScriptContent("var sm = 3; var square = ( a => a*a );", "", 100);
-            sm.AddScriptContent(c, "HelloWorld", 110);
-            using (var pool = new JsEnginePool(sm))
+            var repository = sl.GetRepository();
+            repository.AddAssetResource("ArrayConverter.js", 100); // function convertToJsArray(host)
+            repository.AddScriptContent("var sm = 3; var square = ( a => a*a );", "", 200);
+            repository.AddScriptContent(c, "HelloWorld", 210);
+            using (var pool = new JsEnginePool(repository))
             {
                 int n = 10;
                 var cd = new CountdownEvent(n);
+                ThreadPool.SetMinThreads(8, 200);
                 for (var i = 0; i < n; i++)
                 {
                     var ii = i;

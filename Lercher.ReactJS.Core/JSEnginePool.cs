@@ -12,17 +12,17 @@ namespace Lercher.ReactJS.Core
         private readonly ConcurrentBag<JsEngine> pool = new ConcurrentBag<JsEngine>();
         private bool closing = false;
         private static int n = 0;
-        public readonly IManageScripts ScriptManager;
+        public readonly IListScripts ScriptRepository;
 
         // count the Engines in the wild plus 1 for the closing process.
         // see https://social.msdn.microsoft.com/Forums/vstudio/en-US/aa49f92c-01a8-4901-9846-91bc1587f3ae/countdownevent-initialcount-of-zero?forum=parallelextensions 
         private readonly CountdownEvent counter = new CountdownEvent(1);
 
-        public JsEnginePool(IManageScripts scriptmanager)
+        public JsEnginePool(IListScripts repository)
         {
-            Contract.Assert(scriptmanager != null, nameof(scriptmanager) + " is null.");
-            ScriptManager = scriptmanager;
-            ScriptManager.Close();
+            Contract.Assert(repository != null, nameof(repository) + " is null.");
+            ScriptRepository = repository;
+            ScriptRepository.Freeze();
         }
 
         public void Close()
@@ -62,7 +62,7 @@ namespace Lercher.ReactJS.Core
         {
             int nn = Interlocked.Increment(ref n);
             var e = new JsEngine(this, nn);
-            foreach (var s in ScriptManager.Scripts)
+            foreach (var s in ScriptRepository.Scripts)
             {
                 e.Execute(s.Code, s.Name);
             }

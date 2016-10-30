@@ -8,7 +8,7 @@ namespace Lercher.ReactJS.Core
     // Load scripts like React as described in https://facebook.github.io/react/docs/installation.html @CDN
     public class ScriptLoader
     {
-        private readonly ScriptManager ScriptManager = new ScriptManager();
+        private readonly ScriptRepository ScriptManager = new ScriptRepository();
         private readonly CountdownEvent cd = new CountdownEvent(1);
         private int? sequence = 0;
 
@@ -37,7 +37,7 @@ namespace Lercher.ReactJS.Core
             cd.Signal();
         }
 
-        public ScriptManager WaitForScriptManager()
+        public ScriptRepository GetRepository()
         {
             cd.Signal();
             cd.Wait();

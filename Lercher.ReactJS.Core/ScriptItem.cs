@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Lercher.ReactJS.Core
 {
-    public class ScriptManagerItem
+    public class ScriptItem
     {
         public string Code;
         public string Name;

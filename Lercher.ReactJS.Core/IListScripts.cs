@@ -5,9 +5,9 @@ using Microsoft.ClearScript.V8;
 
 namespace Lercher.ReactJS.Core
 {
-    public interface IManageScripts
+    public interface IListScripts
     {
-        IEnumerable<ScriptManagerItem> Scripts { get; }
-        void Close();
+        IEnumerable<ScriptItem> Scripts { get; }
+        void Freeze();
     }
 }
