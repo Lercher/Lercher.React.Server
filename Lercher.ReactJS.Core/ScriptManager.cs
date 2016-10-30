@@ -26,6 +26,7 @@ namespace Lercher.ReactJS.Core
                 return;
             if (closed) throw new ApplicationException("can't add a script to a closed scriptmanager. Note: a scriptmanager is closed when it is associated with a " + nameof(JsEnginePool));
             scripts.Add(new ScriptManagerItem() { Code = script, Name = url, Sequence = sequence });
+            Console.WriteLine("Loaded script {0}", url);
         }
 
         void IManageScripts.Close()

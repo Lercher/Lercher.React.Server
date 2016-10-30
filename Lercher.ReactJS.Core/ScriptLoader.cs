@@ -14,6 +14,7 @@ namespace Lercher.ReactJS.Core
 
         public void AddUrl(string url)
         {
+            Console.WriteLine("Requesting {0} ...", url);
             sequence++;
             cd.AddCount();
 #pragma warning disable S2930 // "IDisposables" should be disposed
@@ -21,6 +22,8 @@ namespace Lercher.ReactJS.Core
 #pragma warning restore S2930 // "IDisposables" should be disposed
             client.DownloadStringCompleted += Client_DownloadStringCompleted;
             client.BaseAddress = url;
+            client.Encoding = System.Text.Encoding.UTF8;
+            client.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.CacheIfAvailable);
             client.DownloadStringAsync(new Uri(url), sequence);
         }
 

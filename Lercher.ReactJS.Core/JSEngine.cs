@@ -26,8 +26,10 @@ namespace Lercher.ReactJS.Core
 
         public void Calc2(int i)
         {
-            var o = engine.Evaluate("ReactDOM.render.toString() //1+1+sm+square(4)");
-            Console.WriteLine("Engine #{0,-3} Thread {3,-3} Request #{2,-3} says {1}.", SerialNumber, o, i, Thread.CurrentThread.ManagedThreadId);
+            // var o = engine.Evaluate("ReactDOM.render.toString() //1+1+sm+square(4)");
+            var method = i % 2 == 0 ? "renderToStaticMarkup" : "renderToString";
+            var o = engine.Evaluate("ReactDOMServer." + method + "(React.createElement(HelloWorld, { name: \"Mike Meyers\" }))");
+            Console.WriteLine("Engine #{0,-3} Thread {3,-3} Request #{2,-3} says: {1}.", SerialNumber, o, i, Thread.CurrentThread.ManagedThreadId);
         }
 
         internal void Close()
