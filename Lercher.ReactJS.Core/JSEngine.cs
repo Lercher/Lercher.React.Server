@@ -3,6 +3,7 @@ using System.Linq;
 using System.Diagnostics.Contracts;
 using Microsoft.ClearScript.V8;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace Lercher.ReactJS.Core
 {
@@ -11,6 +12,7 @@ namespace Lercher.ReactJS.Core
         private JsEnginePool Pool { get; }
         private readonly V8ScriptEngine engine = new V8ScriptEngine();
         public int SerialNumber { get; }
+        private readonly List<string> services = new List<string>();
 
         public JsEngine(JsEnginePool pool, int nr)
         {
@@ -22,6 +24,11 @@ namespace Lercher.ReactJS.Core
         internal void Execute(string script, string name)
         {
             engine.Execute(name, script);
+        }
+        public void AddService(string globalname, object service)
+        {
+            engine.AddHostObject(globalname, service);
+            services.Add(globalname);
         }
 
         /// <summary>
@@ -61,6 +68,9 @@ namespace Lercher.ReactJS.Core
 
         void IDisposable.Dispose()
         {
+            foreach (var s in services)
+                engine.Execute(string.Format("delete {0};", s));
+            services.Clear();
             Pool.ReturnToPool(this);
         }
     }
