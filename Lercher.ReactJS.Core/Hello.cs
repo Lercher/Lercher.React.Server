@@ -31,6 +31,9 @@ namespace Lercher.ReactJS.Core
                 Console.WriteLine(o1);
                 var o2 = engine.Evaluate("ReactDOMServer.renderToString(React.createElement(HelloWorld, { name: \"Mike Meyers\" }))");
                 Console.WriteLine(o2);
+
+                var rr = rt.Run(engine, "renderToStaticMarkup", "HelloWorld", new { name = "World" });
+                Console.WriteLine(rr.render);
             }
 
 

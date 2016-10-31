@@ -31,7 +31,7 @@ namespace Lercher.ReactJS.Core
         /// <param name="parameters">parameters are passed as an object array with the global name '__', then the expression 
         /// is extended with '.apply(null, __)' and evaluated. '__' is deleted afterwards. Note that this will be null in the function call.</param>
         /// <returns>the evaluated value</returns>
-        public object Evaluate(string expression, params object[] parameters)
+        public dynamic Evaluate(string expression, params object[] parameters)
         {
             if (parameters != null && parameters.Length > 0)
             {
@@ -47,7 +47,8 @@ namespace Lercher.ReactJS.Core
         {
             // var o = engine.Evaluate("ReactDOM.render.toString() //1+1+sm+square(4)");
             var method = i % 2 == 0 ? "renderToStaticMarkup" : "renderToString";
-            var o = engine.Evaluate("ReactDOMServer." + method + "(React.createElement(HelloWorld, { name: \"Mike Meyers\" }))");
+            //var o = engine.Evaluate("ReactDOMServer." + method + "(React.createElement(HelloWorld, { name: \"Mike Meyers\" }))");
+            var o = engine.Evaluate("(function () {var model = { name: \"Mike Meyers\" }; return ReactDOMServer." + method + "(React.createElement(HelloWorld, model));})()");
             Console.WriteLine("Engine #{0,-3} Thread {3,-3} Request #{2,-3} says: {1}.", SerialNumber, o, i, Thread.CurrentThread.ManagedThreadId);
 
         }

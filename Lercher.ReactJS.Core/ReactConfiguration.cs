@@ -49,6 +49,7 @@ namespace Lercher.ReactJS.Core
 
             ReactRepository = ReactLoader.GetRepository();
             ReactRepository.AddAssetResource("ArrayConverter.js"); // function convertToJsArray(host)
+            ReactRepository.AddAssetResource("ReactStub.js"); // function PrepareReact(rfunc, component)
         }
 
         private JsEnginePool GetBabelPool()
@@ -90,7 +91,7 @@ namespace Lercher.ReactJS.Core
                 if (url.Contains('?')) throw new Exception();
                 return url.Replace(System.IO.Path.DirectorySeparatorChar, '/');
             }                
-            catch(Exception ex)
+            catch(Exception)
             {
                 return string.Format("script{0}", n);
             }

@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Component.cs" />
     <Compile Include="ReactConfiguration.cs" />
+    <Compile Include="ReactResult.cs" />
     <Compile Include="ReactRuntime.cs" />
     <Compile Include="Hello.cs" />
     <Compile Include="IListScripts.cs" />
@@ -67,10 +68,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\JSX.js" />
+    <EmbeddedResource Include="Assets\ReactStub.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\ArrayConverter.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\JSX.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
