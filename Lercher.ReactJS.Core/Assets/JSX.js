@@ -23,7 +23,7 @@ function transformCode(code) {
     var babelOpts = {
         presets: ['react', "es2015-no-commonjs", "stage-1"],
         plugins: ['transform-class-properties', 'transform-object-rest-spread', 'transform-flow-strip-types'],
-        sourceMaps: 'inline'
+        sourceMaps: false // 'inline'
     };
 
     var transformed;

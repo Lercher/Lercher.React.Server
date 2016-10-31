@@ -47,7 +47,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Component.cs" />
-    <Compile Include="Environment.cs" />
+    <Compile Include="ReactConfiguration.cs" />
+    <Compile Include="ReactRuntime.cs" />
     <Compile Include="Hello.cs" />
     <Compile Include="IListScripts.cs" />
     <Compile Include="JsEngine.cs" />

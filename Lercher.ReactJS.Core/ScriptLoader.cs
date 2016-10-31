@@ -8,9 +8,15 @@ namespace Lercher.ReactJS.Core
     // Load scripts like React as described in https://facebook.github.io/react/docs/installation.html @CDN
     public class ScriptLoader
     {
-        private readonly ScriptRepository ScriptManager = new ScriptRepository();
+        private readonly ScriptRepository ScriptRepository = new ScriptRepository();
         private readonly CountdownEvent cd = new CountdownEvent(1);
         private int? sequence = 0;
+
+        public void AddUrl(string urlFmt, string p0)
+        {
+            var url = string.Format(urlFmt, p0);
+            AddUrl(url);
+        }
 
         public void AddUrl(string url)
         {
@@ -31,7 +37,7 @@ namespace Lercher.ReactJS.Core
         {
             var seq = e.UserState as int?;
             var client = sender as WebClient;
-            ScriptManager.AddScriptContent(e.Result, client.BaseAddress, seq.Value);
+            ScriptRepository.AddScriptContent(e.Result, client.BaseAddress, seq.Value);
             client.DownloadStringCompleted -= Client_DownloadStringCompleted;
             client.Dispose();
             cd.Signal();
@@ -41,7 +47,8 @@ namespace Lercher.ReactJS.Core
         {
             cd.Signal();
             cd.Wait();
-            return ScriptManager;
+            ScriptRepository.Sequence = sequence.Value + 1;
+            return ScriptRepository;
         }
     }
 }

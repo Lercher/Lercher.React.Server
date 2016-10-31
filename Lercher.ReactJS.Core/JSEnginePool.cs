@@ -25,7 +25,7 @@ namespace Lercher.ReactJS.Core
             ScriptRepository.Freeze();
         }
 
-        public void Close()
+        private void Close()
         {
             if (closing) throw new ApplicationException(string.Format("{0}.{1} must not be called twice.", nameof(JsEnginePool), nameof(Close)));
             closing = true;
@@ -69,7 +69,7 @@ namespace Lercher.ReactJS.Core
             return e;
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             if (closing) return;
             Close();

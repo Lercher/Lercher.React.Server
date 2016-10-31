@@ -13,6 +13,7 @@ namespace Lercher.ReactJS.Core
     {
         private readonly ConcurrentBag<ScriptItem> scripts = new ConcurrentBag<ScriptItem>();
         private bool frozen = false;
+        public int Sequence = 0;
 
 
         IEnumerable<ScriptItem> IListScripts.Scripts
@@ -23,6 +24,12 @@ namespace Lercher.ReactJS.Core
             }
         }
 
+        public void AddScriptContent(string script, string url)
+        {
+            Sequence++;
+            AddScriptContent(script, url, Sequence);
+        }
+
         public void AddScriptContent(string script, string url, int sequence)
         {
             if (string.IsNullOrEmpty(script)) return;
@@ -31,14 +38,14 @@ namespace Lercher.ReactJS.Core
             Console.WriteLine("Loaded script {0}", url);
         }
 
-        public void AddAssetResource(string filename, int sequence)
+        public void AddAssetResource(string filename)
         {
             var a = System.Reflection.Assembly.GetExecutingAssembly();
             using (var st = a.GetManifestResourceStream(this.GetType(), "Assets." + filename))
             using (var tr = new System.IO.StreamReader(st))
             {
                 var script = tr.ReadToEnd();
-                AddScriptContent(script, "resource:" + filename, sequence);
+                AddScriptContent(script, "resource:" + filename);
             }
         }
         

@@ -13,16 +13,34 @@ namespace Lercher.ReactJS.Core
         public static void SayHello()
         {
             Console.WriteLine("Hello from Core");
-
-
             var JSX = "var HelloWorld = React.createClass({  render() { return (<div>Hello {this.props.name}!</div>); }  });";
+
+            // preparation phase
+            ReactRuntime rt;
+            using (var cfg = new ReactConfiguration())
+            {
+                cfg.ScriptContentLoader = (s => s); // we load literals for now, not files.
+                cfg.AddJsx(JSX);
+                rt = cfg.Freeze();
+            }
+
+            // runtime phase
+            using (var engine = rt.ReactPool.Engine)
+            {
+                var o1 = engine.Evaluate("ReactDOMServer.renderToStaticMarkup(React.createElement(HelloWorld, { name: \"Mike Meyers\" }))");
+                Console.WriteLine(o1);
+                var o2 = engine.Evaluate("ReactDOMServer.renderToString(React.createElement(HelloWorld, { name: \"Mike Meyers\" }))");
+                Console.WriteLine(o2);
+            }
+
+
             Console.WriteLine("Compiling {0} ...", JSX);
             var babel = new ScriptLoader();
             babel.AddUrl("https://unpkg.com/babel-standalone@6/babel.min.js");
             babel.AddUrl("https://unpkg.com/babel-polyfill@6/dist/polyfill.min.js");
             var babelRepository = babel.GetRepository();
-            babelRepository.AddAssetResource("ArrayConverter.js", 100); // function convertToJsArray(host)
-            babelRepository.AddAssetResource("JSX.js", 101); // function transformCode(code, url), function transformCode__2()
+            babelRepository.AddAssetResource("ArrayConverter.js"); // function convertToJsArray(host)
+            babelRepository.AddAssetResource("JSX.js"); // function transformCode(code, url), function transformCode__2()
             using (var babelPool = new JsEnginePool(babelRepository))
             using (var e = babelPool.Engine)
             {
@@ -43,9 +61,9 @@ namespace Lercher.ReactJS.Core
             sl.AddUrl("https://unpkg.com/react-dom@15/dist/react-dom.min.js");
             sl.AddUrl("https://unpkg.com/react-dom@15/dist/react-dom-server.min.js");
             var repository = sl.GetRepository();
-            repository.AddAssetResource("ArrayConverter.js", 100); // function convertToJsArray(host)
-            repository.AddScriptContent("var sm = 3; var square = ( a => a*a );", "", 200);
-            repository.AddScriptContent(c, "HelloWorld", 210);
+            repository.AddAssetResource("ArrayConverter.js"); // function convertToJsArray(host)
+            repository.AddScriptContent("var sm = 3; var square = ( a => a*a );", "Test");
+            repository.AddScriptContent(c, "HelloWorld");
             using (var pool = new JsEnginePool(repository))
             {
                 int n = 10;
