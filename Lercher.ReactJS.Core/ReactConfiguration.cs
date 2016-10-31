@@ -112,10 +112,16 @@ namespace Lercher.ReactJS.Core
 
         public ReactRuntime Freeze()
         {
+            GetReactPool();
+            return new ReactRuntime(ReactPool);
+        }
+
+        internal JsEnginePool GetReactPool()
+        {
             LoadExternalScripts();
             if (ReactPool == null)
                 ReactPool = new JsEnginePool(ReactRepository);
-            return new ReactRuntime(ReactPool);
+            return ReactPool;
         }
     }
 }

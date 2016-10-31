@@ -3,7 +3,7 @@
  *
  * see https://github.com/babel/babel-standalone for using babel-standalone:
 
-Usage
+=== Usage ===
 
 Load  babel.js  or  babel.min.js  in your environment. This will expose Babel's API in a  Babel  object:
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,13 +17,10 @@ namespace Lercher.ReactJS.Core
             var JSX = "var HelloWorld = React.createClass({  render() { return (<div>Hello {this.props.name}!</div>); }  });";
 
             // preparation phase
-            ReactRuntime rt;
-            using (var cfg = new ReactConfiguration())
-            {
+            var rt = new ReactRuntime(cfg => {
                 cfg.ScriptContentLoader = (s => s); // we load literals for now, not files.
                 cfg.AddJsx(JSX);
-                rt = cfg.Freeze();
-            }
+            });
 
             // runtime phase
             using (var engine = rt.ReactPool.Engine)
@@ -32,9 +30,14 @@ namespace Lercher.ReactJS.Core
                 var o2 = engine.Evaluate("ReactDOMServer.renderToString(React.createElement(HelloWorld, { name: \"Mike Meyers\" }))");
                 Console.WriteLine(o2);
 
-                var rr = rt.Run(engine, "renderToStaticMarkup", "HelloWorld", new { name = "World" });
+                var rr = rt.RenderToStaticMarkup(engine, "HelloWorld", new { name = "World using engine" });
                 Console.WriteLine(rr.render);
             }
+
+            var sw = Stopwatch.StartNew();
+            var r = rt.RenderToStaticMarkup("HelloWorld", new { name = "World" });
+            sw.Stop();
+            Console.WriteLine("{0} in {1}", r.render, sw.Elapsed); // 1.6ms on my i7 machine
 
 
             Console.WriteLine("Compiling {0} ...", JSX);

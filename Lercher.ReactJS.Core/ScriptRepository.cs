@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
-
-// TODO: We need a Hash over all the script sources after freezing. 
-// Note: This is not a direct requirement for compiling and rendering react code, but for it's intended use case, 
-// where we need to know if some rendered UI is built from identical sources.
+using System.Security.Cryptography;
 
 namespace Lercher.ReactJS.Core
 {
@@ -14,13 +11,24 @@ namespace Lercher.ReactJS.Core
         private readonly ConcurrentBag<ScriptItem> scripts = new ConcurrentBag<ScriptItem>();
         private bool frozen = false;
         public int Sequence = 0;
+        private byte[] hash;
 
-
-        IEnumerable<ScriptItem> IListScripts.Scripts
+        public IEnumerable<ScriptItem> Scripts
         {
             get
             {
                 return scripts.OrderBy(s => s.Sequence);
+            }
+        }
+
+        // Note: This is not a direct requirement for compiling and rendering React code, 
+        // but for it's intended use case, where we need to know if some rendered UI 
+        // is or is not built from identical sources.
+        public byte[] Hash
+        {
+            get
+            {
+                return hash;
             }
         }
 
@@ -52,6 +60,24 @@ namespace Lercher.ReactJS.Core
         void IListScripts.Freeze()
         {
             frozen = true;
+            var n = 0;
+            using (var hasher = HashAlgorithm.Create("SHA256"))
+            {
+                foreach(var s in Scripts)
+                {
+                    n++;
+                    var b = System.Text.Encoding.UTF8.GetBytes(s.Code);
+                    var h = hasher.ComputeHash(b);
+                    if (hash == null)
+                        hash = h;
+                    else
+                    {
+                        for (int i = 0; i < h.Length; i++)
+                            hash[i] ^= h[i]; // XOR
+                    }
+                }
+            }
+            Console.WriteLine("Hash of {0:n0} script(s) is {1}", n, Convert.ToBase64String(hash));
         }
     }
 }

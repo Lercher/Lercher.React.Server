@@ -1,4 +1,5 @@
 ﻿// convert a host array to a JS array
+
 function convertToJsArray(host) {
     var a = [];
     var len = host.Length;
