@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using Microsoft.ClearScript.V8;
 using System.Threading;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lercher.ReactJS.Core
 {
@@ -14,9 +15,10 @@ namespace Lercher.ReactJS.Core
     {
         private JsEnginePool Pool { get; }
         private readonly V8ScriptEngine engine = new V8ScriptEngine();
+        private Stopwatch sw;
 
         /// <summary>
-        /// An identifying number, that is unique among the <see cref="JsEnginePool"/> from which this engine is allocated.
+        /// An identifying number, that is unique among the <see cref="JsEnginePool"/>, this engine is allocated from.
         /// </summary>
         public readonly int SerialNumber;
 
@@ -28,6 +30,16 @@ namespace Lercher.ReactJS.Core
             Pool = pool;
             SerialNumber = nr;
         }
+
+        internal void StartNewStopwatch()
+        {
+            sw = Stopwatch.StartNew();
+        }
+
+        /// <summary>
+        /// The name of the pool, this engine is allocated from.
+        /// </summary>
+        public string PoolName { get { return Pool.Name; } }
 
         internal void Execute(string script, string name)
         {
@@ -78,7 +90,7 @@ namespace Lercher.ReactJS.Core
         internal void Close()
         {
             engine.Dispose();
-            Console.WriteLine("Engine #{0,-3} Thread {3,-3} disposed.", SerialNumber, 0, 0, Thread.CurrentThread.ManagedThreadId);
+            Console.WriteLine("Engine {4}#{0,-3} Thread {3,-3} disposed.", SerialNumber, 0, 0, Thread.CurrentThread.ManagedThreadId, PoolName);
         }
 
         void IDisposable.Dispose()
@@ -86,6 +98,8 @@ namespace Lercher.ReactJS.Core
             foreach (var s in services)
                 engine.Execute(string.Format("delete {0};", s));
             services.Clear();
+            sw.Stop();
+            Console.WriteLine("Engine {0}#{1,-3} Thread {2,-3} used for {3}.", PoolName, SerialNumber, Thread.CurrentThread.ManagedThreadId, sw.Elapsed);
             Pool.ReturnToPool(this);
         }
     }

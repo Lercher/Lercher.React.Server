@@ -16,7 +16,17 @@ namespace Lercher.ReactJS.Core
         /// <summary>
         /// A <see cref=" JsEnginePool"/> to allocate initialized ReactJS processors from.
         /// </summary>
-        public readonly JsEnginePool ReactPool;
+        public JsEnginePool ReactPool
+        {
+            get
+            {
+                lock (this)
+                    return _ReactPool;
+            }
+        }
+        private JsEnginePool _ReactPool;
+
+        private readonly Action<ReactConfiguration> Configure;
 
         /// <summary>
         /// Create a runtime with a configuring Action.
@@ -25,11 +35,38 @@ namespace Lercher.ReactJS.Core
         /// <param name="configure">An <see cref="Action{ReactConfiguration}"/> that configures this runtime. Now and in case of inline refreshment.</param>
         public ReactRuntime(Action<ReactConfiguration> configure)
         {
+            Contract.Assert(configure != null, nameof(configure) + " is null.");
+            Configure = configure;
+            Reconfigure();
+        }
+
+        private void Reconfigure()
+        {
+            IDisposable oldpool;
             using (var cfg = new ReactConfiguration())
             {
-                configure(cfg);
-                ReactPool = cfg.GetReactPool();
+                Configure(cfg);
+                lock (this)
+                {
+                    oldpool = (IDisposable)_ReactPool;
+                    _ReactPool = cfg.GetReactPool();
+                }
             }
+            if (oldpool != null)
+                oldpool.Dispose();
+        }
+
+        /// <summary>
+        /// If created by a configure Action, you can Drop all scripts and reload them with this method.
+        /// Blocks untill all scripts are loaded and all engines of the old pool are idle and then disposed of.
+        /// Note that the runtime handles requests with the old pool until all scripts are loaded, it is then blocked
+        /// for swapping the old pool with the new but empty pool. So the next few requests experience
+        /// extra processing time for script loading and compiling in the JS processor.
+        /// </summary>
+        public void DropAndRefreshAllScripts()
+        {
+            if (Configure == null) throw new ApplicationException("can only refresh a runtime that was created by a configure action");
+            Reconfigure();
         }
 
         /// <summary>
@@ -40,7 +77,9 @@ namespace Lercher.ReactJS.Core
         /// <param name="reactPool">A <see cref="JsEnginePool"/> that can run ReactDOMServer methods, has ReactJS classes and our JS function PrepareReact/2.</param>
         public ReactRuntime(JsEnginePool reactPool)
         {
-            ReactPool = reactPool;
+            Contract.Assert(reactPool != null, nameof(reactPool) + " is null.");
+            _ReactPool = reactPool;
+            Configure = null;
         }
 
         /// <summary>

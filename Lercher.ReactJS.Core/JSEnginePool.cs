@@ -28,6 +28,11 @@ namespace Lercher.ReactJS.Core
         private readonly CountdownEvent counter = new CountdownEvent(1);
 
         /// <summary>
+        /// A name for the pool for debugging
+        /// </summary>
+        public string Name = "(unnamed)";
+
+        /// <summary>
         /// Create a new pool and load the repository's scripts to each single <see cref="JsEngine"/>.
         /// The repository is frozen (see <see cref="ScriptRepository"/>) so that all engines have the same scripts loaded.
         /// </summary>
@@ -70,9 +75,10 @@ namespace Lercher.ReactJS.Core
                 if (closing) throw new ApplicationException("can't acquire a new engine from a closed pool.");
                 counter.AddCount();
                 JsEngine result;
-                if (pool.TryTake(out result))
-                    return result;
-                return NewInitializedEngine();
+                if (!pool.TryTake(out result))
+                    result = NewInitializedEngine();
+                result.StartNewStopwatch();
+                return result;
             }
         }
 #pragma warning restore S2372 // Exceptions should not be thrown from property getters

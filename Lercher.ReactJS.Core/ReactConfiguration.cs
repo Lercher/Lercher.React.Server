@@ -94,8 +94,10 @@ namespace Lercher.ReactJS.Core
         private JsEnginePool GetBabelPool()
         {
             LoadExternalScripts();
-            if (BabelPool == null)
+            if (BabelPool == null) { 
                 BabelPool = new JsEnginePool(BabelRepository);
+                BabelPool.Name = "BabelPool";
+            }
             return BabelPool;
         }
 
@@ -176,8 +178,10 @@ namespace Lercher.ReactJS.Core
         internal JsEnginePool GetReactPool()
         {
             LoadExternalScripts();
-            if (ReactPool == null)
+            if (ReactPool == null) {
                 ReactPool = new JsEnginePool(ReactRepository);
+                ReactPool.Name = "ReactPool";
+            }
             return ReactPool;
         }
     }

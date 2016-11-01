@@ -26,32 +26,51 @@ namespace Lercher.ReactJS.Host
                 cfg.AddJsx("Sample.jsx");
             });
 
+            var ng = new NamesGenerator(Guid.Empty, 1, Guid.Empty);
             using (var engine = runtime.ReactPool.Engine)
             {
-                var ng = new NamesGenerator(Guid.Empty, 1, Guid.Empty);
                 engine.AddService("names", ng);
                 var r = runtime.RenderToStaticMarkup("HelloWorld", modelJson, engine);
                 var r1 = runtime.RenderToStaticMarkup("HelloWorld", model, engine);
                 Console.WriteLine(r.render);
-
-                var sw = Stopwatch.StartNew();
-                ng.reset();
-                var r2 = runtime.RenderToStaticMarkup("HelloWorld", modelJson, engine); // quicker, 7ms
-                sw.Stop();
-                Debug.Assert(r.render == r2.render);
-                Console.WriteLine("Generating JSON took {0}", sw.Elapsed);
-
-                var sw3 = Stopwatch.StartNew();
-                ng.reset();
-                var r3 = runtime.RenderToStaticMarkup("HelloWorld", model, engine); // can use host methods, 14ms.
-                sw.Stop();
-                Debug.Assert(r.render == r3.render);
-                Console.WriteLine("Generating HOST took {0}", sw3.Elapsed);
             }
 
+            using (var engine = runtime.ReactPool.Engine)
+            {
+                engine.AddService("names", ng);
+                ng.reset();
+                var sw = Stopwatch.StartNew();
+                var r2 = runtime.RenderToStaticMarkup("HelloWorld", modelJson, engine); // quicker, 7ms
+                sw.Stop();
+                Console.WriteLine("Generating JSON took {0}", sw.Elapsed);
+            }
+
+            using (var engine = runtime.ReactPool.Engine)
+            {
+                engine.AddService("names", ng);
+                ng.reset();
+                var sw = Stopwatch.StartNew();
+                var r3 = runtime.RenderToStaticMarkup("HelloWorld", model, engine); // can use host methods, 14ms.
+                sw.Stop();
+                Console.WriteLine("Generating HOST took {0}", sw.Elapsed);
+            }
+
+            // -------------------------------------------------------------------------------------------------------
+            runtime.DropAndRefreshAllScripts();
+
+            using (var engine = runtime.ReactPool.Engine)
+            {
+                engine.AddService("names", ng);
+                ng.reset();
+                var sw = Stopwatch.StartNew();
+                var r4 = runtime.RenderToStaticMarkup("HelloWorld", model, engine); // can use host methods, 14ms.
+                sw.Stop();
+                Console.WriteLine("Generating HOST took {0}", sw.Elapsed);
+            }
 
             //Hello.SayHello();
 
+            Console.Write("\nEnter ... ");
             Console.ReadLine();
         }
     }
