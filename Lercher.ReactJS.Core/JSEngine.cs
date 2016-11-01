@@ -7,14 +7,22 @@ using System.Collections.Generic;
 
 namespace Lercher.ReactJS.Core
 {
+    /// <summary>
+    /// A facade on top of a ClearScript/V8 JS processor
+    /// </summary>
     public class JsEngine : IDisposable
     {
         private JsEnginePool Pool { get; }
         private readonly V8ScriptEngine engine = new V8ScriptEngine();
-        public int SerialNumber { get; }
+
+        /// <summary>
+        /// An identifying number, that is unique among the <see cref="JsEnginePool"/> from which this engine is allocated.
+        /// </summary>
+        public readonly int SerialNumber;
+
         private readonly List<string> services = new List<string>();
 
-        public JsEngine(JsEnginePool pool, int nr)
+        internal JsEngine(JsEnginePool pool, int nr)
         {
             Contract.Assert(pool != null, nameof(pool) + " is null.");
             Pool = pool;
@@ -25,6 +33,13 @@ namespace Lercher.ReactJS.Core
         {
             engine.Execute(name, script);
         }
+
+        /// <summary>
+        /// Add a .Net host object with a given name to the globel namespace of the JS processor. 
+        /// The object is removed (JS delete) from the engine when it is disposed of.
+        /// </summary>
+        /// <param name="globalname">the name of the host object in the JS global namespace</param>
+        /// <param name="service">the .Net host object to be used as a service</param>
         public void AddService(string globalname, object service)
         {
             engine.AddHostObject(globalname, service);

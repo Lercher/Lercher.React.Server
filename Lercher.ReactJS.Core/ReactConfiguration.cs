@@ -4,7 +4,9 @@ using System.Linq;
 namespace Lercher.ReactJS.Core
 {
     /// <summary>
-    /// Creator for a ReactEnvironment, start here.
+    /// Configurator for a ReactEnvironment. 
+    /// Loads ReactJS and Babel scripts from the https://unpkg.com CDN. 
+    /// Loads and compiles static JSX files to JS. Adds JS files.
     /// </summary>
     /// <remarks>
     /// Usage protocol:
@@ -20,18 +22,51 @@ namespace Lercher.ReactJS.Core
     /// </remarks>
     public class ReactConfiguration : IDisposable
     {
+        /// <summary>
+        /// Change this value to load a particular Babel version. Default = 'latest'.
+        /// </summary>
         public string UseBabelVersion = "latest"; // 6
+
+        /// <summary>
+        /// Change this value to load a particular ReactJS version. Default = 'latest'.
+        /// </summary>
         public string UseReactVersion = "latest"; // 15
+
+        /// <summary>
+        /// The <see cref="ScriptLoader"/> for Babel scripts.
+        /// </summary>
         public readonly ScriptLoader BabelLoader = new ScriptLoader();
+
+        /// <summary>
+        /// The <see cref="ScriptLoader"/> for ReactJS scripts.
+        /// </summary>
         public readonly ScriptLoader ReactLoader = new ScriptLoader();
+
+        /// <summary>
+        /// The <see cref="ScriptRepository"/> for Babel scripts.
+        /// </summary>
         public ScriptRepository BabelRepository = null;
+
+        /// <summary>
+        /// The <see cref="ScriptRepository"/> for ReactJS scripts.
+        /// </summary>
         public ScriptRepository ReactRepository = null;
+
         private JsEnginePool BabelPool = null;
         private JsEnginePool ReactPool = null;
         private int n = 0;
 
+        /// <summary>
+        /// The implementation to transform script names to their content.
+        /// Defaults to System.IO.File.ReadAllText.
+        /// </summary>
         public Func<string, string> ScriptContentLoader = System.IO.File.ReadAllText;
 
+
+        /// <summary>
+        /// Request Babel and ReactJS scripts from https://unpkg.com and freeze the two <see cref="ScriptLoader"/>s.
+        /// Add our own appropriate JS helper scripts from embedded ressources in this library.
+        /// </summary>
         public void LoadExternalScripts()
         {
             if (BabelRepository != null && ReactRepository != null) return;
@@ -52,6 +87,10 @@ namespace Lercher.ReactJS.Core
             ReactRepository.AddAssetResource("ReactStub.js"); // function PrepareReact(rfunc, component)
         }
 
+        /// <summary>
+        /// Freeze the Babel <see cref="ScriptRepository"/> and create a <see cref="JsEnginePool"/> for JSX to JS compilation with Babel.
+        /// </summary>
+        /// <returns>A <see cref="JsEnginePool"/> with initialized Babel, ready for compiling JSX to JS</returns>
         private JsEnginePool GetBabelPool()
         {
             LoadExternalScripts();
@@ -60,6 +99,13 @@ namespace Lercher.ReactJS.Core
             return BabelPool;
         }
 
+        /// <summary>
+        /// Add a static JSX file. The name is fed to <see cref="ScriptContentLoader"/> to get the contents of the script.
+        /// Defaults to loading the local file with name as path.
+        /// This content is then compiled to JS using Babel with react addin as a compiler.
+        /// Finally the JS script is added to the <see cref="ReactRepository"/>.
+        /// </summary>
+        /// <param name="name">Locator of a JSX script resource. Usually a file path.</param>
         public void AddJsx(string name)
         {
             CheckNonFrozen();
@@ -72,6 +118,13 @@ namespace Lercher.ReactJS.Core
             }
         }
 
+        /// <summary>
+        /// Add a static JS file. The name is fed to <see cref="ScriptContentLoader"/> to get the contents of the script.
+        /// Defaults to loading the local file with name as path.
+        /// The contents are added to the <see cref="ReactRepository"/>.
+        /// Note that this method does no JSX to JS compilation, but see also <see cref="AddJsx(string)"/>.
+        /// </summary>
+        /// <param name="name">Locator of a JS script resource. Usually a file path.</param>
         public void AddJs(string name)
         {
             CheckNonFrozen();
@@ -106,10 +159,14 @@ namespace Lercher.ReactJS.Core
         void IDisposable.Dispose()
         {
             if (BabelPool != null)
-                BabelPool.Dispose();
+                ((IDisposable)BabelPool).Dispose();
             BabelPool = null;
         }
 
+        /// <summary>
+        /// Freezes script compilation and/or loading and returns a new initialized and configured <see cref="ReactRuntime"/>.
+        /// </summary>
+        /// <returns>A <see cref="ReactRuntime"/> that was configured by this object.</returns>
         public ReactRuntime Freeze()
         {
             GetReactPool();

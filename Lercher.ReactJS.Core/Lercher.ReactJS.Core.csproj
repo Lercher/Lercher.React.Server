@@ -48,7 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component.cs" />
     <Compile Include="ReactConfiguration.cs" />
     <Compile Include="ReactResult.cs" />
     <Compile Include="ReactRuntime.cs" />
