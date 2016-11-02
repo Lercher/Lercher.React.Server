@@ -71,7 +71,7 @@ namespace Lercher.ReactJS.Host
             }
 
             var rnd = new System.Random();
-            WaitCallback wt = (o) =>
+            ThreadStart wt = () =>
             {
                 while (true)
                 {
@@ -87,9 +87,11 @@ namespace Lercher.ReactJS.Host
                     }
                 }
             };
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 50; i++)
             {
-                ThreadPool.QueueUserWorkItem(wt, null);
+                var t = new Thread(wt);
+                t.IsBackground = true;
+                t.Start();
             }
 
             //Hello.SayHello();
