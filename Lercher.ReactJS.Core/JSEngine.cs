@@ -71,6 +71,7 @@ namespace Lercher.ReactJS.Core
             {
                 engine.AddHostObject("__", parameters);
                 var ret = engine.Evaluate(expression + ".apply(null, convertToJsArray(__))");
+                engine.AddHostObject("__", new object());
                 engine.Execute("delete __;");
                 return ret;
             }
@@ -96,7 +97,10 @@ namespace Lercher.ReactJS.Core
         void IDisposable.Dispose()
         {
             foreach (var s in services)
+            {
+                engine.AddHostObject(s, new object());
                 engine.Execute(string.Format("delete {0};", s));
+            }
             services.Clear();
             sw.Stop();
             Console.WriteLine("Engine {0}#{1,-3} Thread {2,-3} used for {3}.", PoolName, SerialNumber, Thread.CurrentThread.ManagedThreadId, sw.Elapsed);

@@ -1,5 +1,4 @@
-﻿
-var HelloWorld = React.createClass({
+﻿var HelloWorld = React.createClass({
     render() {
         return (
 			<div>

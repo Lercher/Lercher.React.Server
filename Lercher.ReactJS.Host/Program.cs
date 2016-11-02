@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Lercher.ReactJS.Core;
 
@@ -23,7 +24,8 @@ namespace Lercher.ReactJS.Host
             var modelJson = Newtonsoft.Json.JsonConvert.SerializeObject(model);
 
             var runtime = new ReactRuntime(cfg => {
-                cfg.AddJsx("Sample.jsx");
+                //cfg.AddJsx("Sample.jsx");
+                cfg.WatchDirectory("../..", TimeSpan.FromSeconds(1));
             });
 
             var ng = new NamesGenerator(Guid.Empty, 1, Guid.Empty);
@@ -66,6 +68,28 @@ namespace Lercher.ReactJS.Host
                 var r4 = runtime.RenderToStaticMarkup("HelloWorld", model, engine); // can use host methods, 14ms.
                 sw.Stop();
                 Console.WriteLine("Generating HOST took {0}", sw.Elapsed);
+            }
+
+            var rnd = new System.Random();
+            WaitCallback wt = (o) =>
+            {
+                while (true)
+                {
+                    var v = 0.547238 + rnd.NextDouble();
+                    var ts = TimeSpan.FromSeconds(v);
+                    Thread.Sleep(ts);
+                    using (var engine = runtime.ReactPool.Engine)
+                    {
+                        engine.AddService("names", ng);
+                        ng.reset();
+                        var r = runtime.RenderToStaticMarkup("HelloWorld", model, engine);
+                        Console.WriteLine("rendered {0:n0} chars in the {1}-loop. Please Change the Js/Jsx files manually.", r.render.Length, ts);
+                    }
+                }
+            };
+            for (int i = 0; i < 5; i++)
+            {
+                ThreadPool.QueueUserWorkItem(wt, null);
             }
 
             //Hello.SayHello();

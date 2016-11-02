@@ -27,6 +27,7 @@ namespace Lercher.ReactJS.Core
         private JsEnginePool _ReactPool;
 
         private readonly Action<ReactConfiguration> Configure;
+        private ScriptsWatcher watcher;
 
         /// <summary>
         /// Create a runtime with a configuring Action.
@@ -48,8 +49,11 @@ namespace Lercher.ReactJS.Core
                 Configure(cfg);
                 lock (this)
                 {
+                    if (watcher != null) watcher.StopNotify();
                     oldpool = (IDisposable)_ReactPool;
                     _ReactPool = cfg.GetReactPool();
+                    watcher = cfg.Watcher;
+                    if (watcher != null) watcher.StartNotify(this.Reconfigure);
                 }
             }
             if (oldpool != null)

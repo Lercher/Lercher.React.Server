@@ -54,6 +54,7 @@ namespace Lercher.ReactJS.Core
 
         private JsEnginePool BabelPool = null;
         private JsEnginePool ReactPool = null;
+        internal ScriptsWatcher Watcher = null;
         private int n = 0;
 
         /// <summary>
@@ -94,7 +95,8 @@ namespace Lercher.ReactJS.Core
         private JsEnginePool GetBabelPool()
         {
             LoadExternalScripts();
-            if (BabelPool == null) { 
+            if (BabelPool == null)
+            {
                 BabelPool = new JsEnginePool(BabelRepository);
                 BabelPool.Name = "BabelPool";
             }
@@ -135,6 +137,12 @@ namespace Lercher.ReactJS.Core
             ReactRepository.AddScriptContent(script, Sanitize(name, n));
         }
 
+        public void WatchDirectory(string path, TimeSpan gracePeriod)
+        {
+            if (Watcher != null) throw new ApplicationException("you can attach only one directory to be watched for changes");
+            Watcher = new ScriptsWatcher(path, gracePeriod);
+            Watcher.EnumerateJsAndJsx(this);
+        }
 
         private static string Sanitize(string url, int n)
         {
@@ -145,8 +153,8 @@ namespace Lercher.ReactJS.Core
                 if (url.Contains('*')) throw new Exception();
                 if (url.Contains('?')) throw new Exception();
                 return url.Replace(System.IO.Path.DirectorySeparatorChar, '/');
-            }                
-            catch(Exception)
+            }
+            catch (Exception)
             {
                 return string.Format("script{0}", n);
             }
@@ -178,7 +186,8 @@ namespace Lercher.ReactJS.Core
         internal JsEnginePool GetReactPool()
         {
             LoadExternalScripts();
-            if (ReactPool == null) {
+            if (ReactPool == null)
+            {
                 ReactPool = new JsEnginePool(ReactRepository);
                 ReactPool.Name = "ReactPool";
             }

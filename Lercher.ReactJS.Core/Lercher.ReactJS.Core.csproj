@@ -59,6 +59,7 @@
     <Compile Include="ScriptLoader.cs" />
     <Compile Include="ScriptRepository.cs" />
     <Compile Include="ScriptItem.cs" />
+    <Compile Include="ScriptsWatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Licenses\ClearScript.main.license" />
