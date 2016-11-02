@@ -32,12 +32,15 @@ namespace Lercher.ReactJS.Host
 
         public string getNextName()
         {
-            seed++;
-            ms.Position = seedpos;
-            bw.Write(seed);
-            ms.Position = 0;
-            var b = ha.ComputeHash(ms);
-            return MakeNameFrom(b);
+            lock (ha)
+            {
+                seed++;
+                ms.Position = seedpos;
+                bw.Write(seed);
+                ms.Position = 0;
+                var b = ha.ComputeHash(ms);
+                return MakeNameFrom(b);
+            }
         }
 
         private static string MakeNameFrom(byte[] b)
