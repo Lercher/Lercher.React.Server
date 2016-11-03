@@ -6,12 +6,24 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Lercher.ReactJS.Core;
+using Owin;
+using Microsoft.Owin.Hosting;
 
 namespace Lercher.ReactJS.Host
 {
     static class Program
     {
         static void Main(string[] args)
+        {
+            var url = "http://+:8182";
+            using (WebApp.Start<Startup>(url))
+            {
+                Console.WriteLine("\nListening on {0}/react. Press Enter to shut down ...\n", url.Replace("+", System.Environment.MachineName));
+                Console.ReadLine();
+            }
+        }
+
+        static void MultiThreadRunner()
         {
             Console.WriteLine("This ist Lercher.ReactJS.Host");
 
@@ -96,8 +108,6 @@ namespace Lercher.ReactJS.Host
 
             //Hello.SayHello();
 
-            Console.Write("\nEnter ... ");
-            Console.ReadLine();
         }
     }
 }

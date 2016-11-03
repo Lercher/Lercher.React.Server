@@ -1,13 +1,19 @@
 ﻿var HelloWorld = React.createClass({
     render() {
         return (
-			<div>
-			    Hello {this.props.name}!
-                <Inner name={this.props.name} />
-                {convertToJsArray(this.props.values).map((v) =>
-                    <InputBox for={v}/>
-                )}
-			</div>
+            <form action="#" method="post">
+			    <div>
+			        Hello {this.props.name}!
+                    <Inner name={this.props.name} />
+                    <br/>
+                    {convertToJsArray(this.props.values).map((v) =>
+                        <InputBox for={v}/>
+                    )}
+			    </div>
+                <div>
+                    <input type="submit" value="Submit"/>
+                </div>
+            </form>
 		);
     }
 });
@@ -15,8 +21,8 @@
 var Inner = React.createClass({
     render() {
         return (
-            <a href=".">
-                Reload me (= {this.props.name})
+            <a href="#">
+                Reload s (= {this.props.name})
             </a>
         );
     }
