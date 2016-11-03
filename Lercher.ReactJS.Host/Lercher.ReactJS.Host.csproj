@@ -88,6 +88,7 @@
     <None Include="Licenses\v8.strongtalk.license" />
     <None Include="Licenses\v8.v8.license" />
     <None Include="Licenses\v8.valgrind.license" />
+    <None Include="model.json" />
     <None Include="packages.config" />
     <None Include="Sample.jsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

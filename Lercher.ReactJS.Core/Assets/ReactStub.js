@@ -9,7 +9,7 @@ function PrepareReact(rfunc, component) {
         var render = rfunc(element);
         var modelAsJson = null;
         if (modelWasJson)
-            modelAsJson = JSON.stringify(model);
+            modelAsJson = JSON.stringify(model, null, ' '); // pretty printed
         return { modelAsJson, render };
     };
 }
