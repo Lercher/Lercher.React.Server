@@ -30,6 +30,17 @@ namespace Lercher.ReactJS.Core
         private ScriptsWatcher watcher;
 
         /// <summary>
+        /// Allocate an Engine from the <see cref="ReactPool"/>. Be sure to Dispose() of.
+        /// </summary>
+        public JsEngine Engine
+        {
+            get
+            {
+                return ReactPool.Engine;
+            }
+        }
+
+        /// <summary>
         /// Create a runtime with a configuring Action.
         /// Enables inline refreshing of script repositories.
         /// </summary>
