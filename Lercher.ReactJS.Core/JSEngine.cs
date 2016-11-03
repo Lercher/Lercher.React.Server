@@ -15,7 +15,7 @@ namespace Lercher.ReactJS.Core
     {
         private JsEnginePool Pool { get; }
         private readonly V8ScriptEngine engine = new V8ScriptEngine();
-        private Stopwatch sw;
+        private readonly Stopwatch sw = new Stopwatch();
 
         /// <summary>
         /// An identifying number, that is unique among the <see cref="JsEnginePool"/>, this engine is allocated from.
@@ -33,7 +33,7 @@ namespace Lercher.ReactJS.Core
 
         internal void StartNewStopwatch()
         {
-            sw = Stopwatch.StartNew();
+            sw.Restart();
         }
 
         /// <summary>
@@ -91,6 +91,7 @@ namespace Lercher.ReactJS.Core
         internal void Close()
         {
             engine.Dispose();
+            sw.Stop();
             Console.WriteLine("Engine {4}#{0,-3} Thread {3,-3} disposed.", SerialNumber, 0, 0, Thread.CurrentThread.ManagedThreadId, PoolName);
         }
 
@@ -103,6 +104,8 @@ namespace Lercher.ReactJS.Core
             }
             services.Clear();
             sw.Stop();
+            if (Pool.GarbageCollection != JsEnginePoolGarbageStrategy.Automatic)
+                engine.CollectGarbage(exhaustive: (Pool.GarbageCollection == JsEnginePoolGarbageStrategy.ExhaustiveAfterUse));
             Console.WriteLine("Engine {0}#{1,-3} Thread {2,-3} used for {3}.", PoolName, SerialNumber, Thread.CurrentThread.ManagedThreadId, sw.Elapsed);
             Pool.ReturnToPool(this);
         }

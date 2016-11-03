@@ -5,10 +5,10 @@ using System.Timers;
 
 namespace Lercher.ReactJS.Core
 {
-    public class ScriptsWatcher
+    internal class ScriptsWatcher
     {
-        private TimeSpan gracePeriod;
-        private string path;
+        private readonly TimeSpan gracePeriod;
+        private readonly string path;
         private FileSystemWatcher fsw;
         private Action notification;
         private readonly Timer tmr = new Timer();

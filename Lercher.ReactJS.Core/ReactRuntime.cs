@@ -109,7 +109,11 @@ namespace Lercher.ReactJS.Core
 
             var expr = string.Format("PrepareReact(ReactDOMServer.{0}, {1})", reactDomServerMethodName, componentName);
             dynamic result = engine.Evaluate(expr, model);
-            return new ReactResult() { element = result.element, model = result.model, render = result.render };
+            var r = new ReactResult() { modelAsJson = result.modelAsJson, render = result.render };
+            var disp = result as IDisposable;
+            if (disp != null)
+                disp.Dispose();
+            return r;
         }
 
         /// <summary>

@@ -8,6 +8,25 @@ using Microsoft.ClearScript.V8;
 namespace Lercher.ReactJS.Core
 {
     /// <summary>
+    /// Configuration values for a <see cref="JsEngine"/>'s JS processor garbage collection strategy
+    /// </summary>
+    public enum JsEnginePoolGarbageStrategy
+    {
+        /// <summary>
+        /// Don't issue engine.CollectGarbage() calls at all. Memory management is left completely to the JS processor, i.e. ClearScript/V8.
+        /// </summary>
+        Automatic,
+        /// <summary>
+        /// Issue a non exhaustive engine.CollectGarbage() call on returning the <see cref="JsEngine"/> to its <see cref="JsEnginePool"/>.
+        /// </summary>
+        CollectAfterUse,
+        /// <summary>
+        /// Issue an exhaustive engine.CollectGarbage() call on returning the <see cref="JsEngine"/> to its <see cref="JsEnginePool"/>.
+        /// </summary>
+        ExhaustiveAfterUse
+    }
+
+    /// <summary>
     /// A threadsafe way to allocate and reuse JS processors.
     /// Note: There is no upper limit in creating new processors but if you use this component with .Net's Threadpool, 
     /// you should get at max processors as you have logical CPUs in your box.
@@ -17,6 +36,11 @@ namespace Lercher.ReactJS.Core
         private readonly ConcurrentBag<JsEngine> pool = new ConcurrentBag<JsEngine>();
         private bool closing = false;
         private static int n = 0;
+
+        /// <summary>
+        /// The <see cref="JsEngine"/>'s JS processor garbage collection strategy. Defaults to <see cref="JsEnginePoolGarbageStrategy.ExhaustiveAfterUse"/>.
+        /// </summary>
+        public JsEnginePoolGarbageStrategy GarbageCollection = JsEnginePoolGarbageStrategy.ExhaustiveAfterUse;
 
         /// <summary>
         /// The list of scripts that were loaded to all <see cref="JsEngine"/>s of this pool.
