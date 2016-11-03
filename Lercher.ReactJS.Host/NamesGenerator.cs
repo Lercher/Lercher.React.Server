@@ -11,13 +11,13 @@ namespace Lercher.ReactJS.Host
         readonly private long seedpos = 0;
         readonly private HashAlgorithm ha = HashAlgorithm.Create("SHA1"); // 160bit of entropy
 
-        public NamesGenerator(Guid itemid, int dataversion, Guid salt)
+        public NamesGenerator(Guid itemid, int dataversion, byte[] salt)
         {
             ms = new System.IO.MemoryStream();
             bw = new System.IO.BinaryWriter(ms);
             bw.Write(itemid.ToByteArray());
             bw.Write(dataversion);
-            bw.Write(salt.ToByteArray());
+            bw.Write(salt);
             bw.Flush();
             seedpos = ms.Position;
             bw.Write(seed);

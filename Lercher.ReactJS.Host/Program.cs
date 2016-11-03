@@ -47,10 +47,10 @@ namespace Lercher.ReactJS.Host
                 cfg.WatchDirectory("../..", TimeSpan.FromSeconds(1));
             });
 
-            var ng = new NamesGenerator(Guid.Empty, 1, Guid.Empty);
+            var ng = new NamesGenerator(Guid.Empty, 1, Guid.Empty.ToByteArray());
             using (var engine = runtime.ReactPool.Engine)
             {
-                engine.AddService("names", ng);
+                engine.AddHostService("names", ng);
                 var r = runtime.RenderToStaticMarkup("HelloWorld", modelJson, engine);
                 var r1 = runtime.RenderToStaticMarkup("HelloWorld", model, engine);
                 Console.WriteLine(r.render);
@@ -58,7 +58,7 @@ namespace Lercher.ReactJS.Host
 
             using (var engine = runtime.ReactPool.Engine)
             {
-                engine.AddService("names", ng);
+                engine.AddHostService("names", ng);
                 ng.reset();
                 var sw = Stopwatch.StartNew();
                 var r2 = runtime.RenderToStaticMarkup("HelloWorld", modelJson, engine); // quicker, 7ms
@@ -68,7 +68,7 @@ namespace Lercher.ReactJS.Host
 
             using (var engine = runtime.ReactPool.Engine)
             {
-                engine.AddService("names", ng);
+                engine.AddHostService("names", ng);
                 ng.reset();
                 var sw = Stopwatch.StartNew();
                 var r3 = runtime.RenderToStaticMarkup("HelloWorld", model, engine); // can use host methods, 14ms.
@@ -81,7 +81,7 @@ namespace Lercher.ReactJS.Host
 
             using (var engine = runtime.ReactPool.Engine)
             {
-                engine.AddService("names", ng);
+                engine.AddHostService("names", ng);
                 ng.reset();
                 var sw = Stopwatch.StartNew();
                 var r4 = runtime.RenderToStaticMarkup("HelloWorld", model, engine); // can use host methods, 14ms.
@@ -99,7 +99,7 @@ namespace Lercher.ReactJS.Host
                     Thread.Sleep(ts);
                     using (var engine = runtime.ReactPool.Engine)
                     {
-                        engine.AddService("names", ng);
+                        engine.AddHostService("names", ng);
                         ng.reset();
                         var r = runtime.RenderToStaticMarkup("HelloWorld", model, engine);
                         Console.WriteLine("rendered {0:n0} chars in the {1}-loop. Please Change the Js/Jsx files manually.", r.render.Length, ts);

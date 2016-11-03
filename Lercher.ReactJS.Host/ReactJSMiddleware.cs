@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Lercher.ReactJS.Core;
 using Microsoft.Owin;
+using System.Collections.Generic;
 
 namespace Lercher.ReactJS.Host
 {
@@ -25,26 +26,38 @@ namespace Lercher.ReactJS.Host
 
             PathString rest;
             if (context.Request.Path.StartsWithSegments(route, out rest))
-                ReactOn(context, rest);
+                await ReactOn(context, rest);
             else
                 await Next.Invoke(context);
         }
 
-        private void ReactOn(IOwinContext context, PathString rest)
+        private async Task ReactOn(IOwinContext context, PathString rest)
         {
             Console.WriteLine("{0} React call: {1}", DateTime.Now, rest);
 
+            IFormCollection form = null;
+            if (context.Request.Method == "POST")
+                form = await context.Request.ReadFormAsync();
 
             var modelJson = loadJson();
             using (var engine = runtime.Engine)
             {
-                var ng = new NamesGenerator(Guid.Empty, 1, Guid.Empty);
-                engine.AddService("names", ng);
+                var ng = new NamesGenerator(Guid.Empty, 1, engine.ScriptsHash);
+                engine.AddHostService("names", ng);
+                engine.SetContext(ConvertToDictionary(form));
                 var r = runtime.RenderToStaticMarkup("HelloWorld", modelJson, engine);
                 context.Response.ContentType = "text/html";
                 context.Response.Write(r.render);
                 saveJson(r.modelAsJson);
             }
+        }
+
+        private static IDictionary<string, string> ConvertToDictionary(IFormCollection form)
+        {
+            var r = new Dictionary<string, string>();
+            foreach (var kv in form)
+                r[kv.Key] = kv.Value[0]; // won't accept multiple duplicate names!
+            return r;
         }
 
         private static string loadJson()

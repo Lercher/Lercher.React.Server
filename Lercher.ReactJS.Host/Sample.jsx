@@ -4,6 +4,7 @@
             <form action="#" method="post">
 			    <div>
 			        Hello {this.props.name}!
+                    Not {this.props.name}? ... then enter your name: <input name="name" value={this.props.name}/>. Is it {global.form.name}?
                     <Inner name={this.props.name} />
                     <br/>
                     {convertToJsArray(this.props.values).map((v) =>

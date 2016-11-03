@@ -29,6 +29,7 @@ namespace Lercher.ReactJS.Core
             Contract.Assert(pool != null, nameof(pool) + " is null.");
             Pool = pool;
             SerialNumber = nr;
+            SetContext(null);
         }
 
         internal void StartNewStopwatch()
@@ -47,30 +48,52 @@ namespace Lercher.ReactJS.Core
         }
 
         /// <summary>
+        /// Hash value identifying the loaded scripts contents
+        /// </summary>
+        public byte[] ScriptsHash { get
+            {
+                return Pool.ScriptRepository.Hash;
+            }
+        }
+
+        /// <summary>
         /// Add a .Net host object with a given name to the globel namespace of the JS processor. 
         /// The object is removed (JS delete) from the engine when it is disposed of.
         /// </summary>
         /// <param name="globalname">the name of the host object in the JS global namespace</param>
         /// <param name="service">the .Net host object to be used as a service</param>
-        public void AddService(string globalname, object service)
+        public void AddHostService(string globalname, object service)
         {
             engine.AddHostObject(globalname, service);
             services.Add(globalname);
+        }
+
+        private string selfJson;
+
+        /// <summary>
+        /// Set the context (i.e. this) for the next calls to <see cref="Evaluate(string, object[])"/>. Defaults to null.
+        /// </summary>
+        /// <param name="self">This object will be serialized to JSON an submitted as 'this' to all next calls to <see cref="Evaluate(string, object[])"/>.</param>
+        public void SetContext(object self)
+        {
+            selfJson = Newtonsoft.Json.JsonConvert.SerializeObject(self);
         }
 
         /// <summary>
         /// evaluate an expression OR call a function with parameters
         /// </summary>
         /// <param name="expression">A standard JS expressen, if parameters are missing, a function pointer, if parameters are present.</param>
-        /// <param name="parameters">parameters are passed as an object array with the global name '__', then the expression 
-        /// is extended with '.apply(null, __)' and evaluated. '__' is deleted afterwards. Note that this will be null in the function call.</param>
+        /// <param name="parameters">parameters are passed as an object array with the global name '__.p', then the expression 
+        /// is extended with '.apply(JSON.parse(__.t), __.p)' and evaluated. '__' is deleted afterwards. 
+        /// Note that 'this' will be the <see cref="SetContext(object)"/> in the function call, but 'this' will not be migrated back to the host.</param>
         /// <returns>the evaluated value</returns>
         public dynamic Evaluate(string expression, params object[] parameters)
         {
             if (parameters != null && parameters.Length > 0)
             {
-                engine.AddHostObject("__", parameters);
-                var ret = engine.Evaluate(expression + ".apply(null, convertToJsArray(__))");
+                var __ = new { t = selfJson, p = parameters };
+                engine.AddHostObject("__", __);
+                var ret = engine.Evaluate(expression + ".apply(JSON.parse(__.t), convertToJsArray(__.p))");
                 engine.AddHostObject("__", new object());
                 engine.Execute("delete __;");
                 return ret;
@@ -103,6 +126,7 @@ namespace Lercher.ReactJS.Core
                 engine.Execute(string.Format("delete {0};", s));
             }
             services.Clear();
+            SetContext(null);
             sw.Stop();
             if (Pool.GarbageCollection != JsEnginePoolGarbageStrategy.Automatic)
                 engine.CollectGarbage(exhaustive: (Pool.GarbageCollection == JsEnginePoolGarbageStrategy.ExhaustiveAfterUse));
