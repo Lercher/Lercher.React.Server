@@ -25,6 +25,10 @@ function action(name, current, change) {
     return value;
 }
 
+function v_i_ar(n, self) {
+    return action(n, self.props.v, (value) => self.props.ar[self.props.i] = value);
+}
+
 // react components
 
 var HelloWorld = React.createClass({
@@ -61,7 +65,7 @@ var Inner = React.createClass({
 var InputBox = React.createClass({
     render() {
         var n = names.getNextName();
-        var v = action(n, this.props.v, (value) => this.props.ar[this.props.i] = value);
-        return <input name={n} value={v } />;
+        var v = v_i_ar(n, this);
+        return <input name={n} value={v} />;
     }
 });
