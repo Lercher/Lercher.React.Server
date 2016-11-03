@@ -1,18 +1,43 @@
-﻿var HelloWorld = React.createClass({
+﻿var global;
+
+function reactPreprocessor(model) {
+    global = {
+        form: this,
+        actions: []
+    };
+}
+
+function reactPostprocessor(model) {
+    global.actions.forEach(a => a());
+    delete global.form;
+    delete global.actions;
+}
+
+function action(name, current, change) {
+    if (!global.form) return current;
+    var value = global.form[name];
+    if (typeof value === "undefined") return current;
+    if (value === current) return current;
+    var a = () => change(value);
+    global.actions.push(a);
+    return value;
+}
+
+var HelloWorld = React.createClass({
     render() {
         return (
             <form action="#" method="post">
 			    <div>
 			        Hello {this.props.name}!
-                    Not {this.props.name}? ... then enter your name: <input name="name" value={this.props.name}/>. Is it {global.form.name}?
+			        Not {this.props.name}? ... then enter your name: <input name="name" value={this.props.name } />. Is it {global.form.name}?
                     <Inner name={this.props.name} />
-                    <br/>
-                    {convertToJsArray(this.props.values).map((v) =>
-                        <InputBox for={v}/>
+                    <br />
+			        {convertToJsArray(this.props.values).map((v, i, ar) =>
+                        <InputBox v={v} i={i} ar={ar} />
                     )}
 			    </div>
                 <div>
-                    <input type="submit" value="Submit"/>
+                    <input type="submit" value="Submit" />
                 </div>
             </form>
 		);
@@ -32,6 +57,7 @@ var Inner = React.createClass({
 var InputBox = React.createClass({
     render() {
         var n = names.getNextName();
-        return <input name={n} value={this.props.for}/>;
+        var v = action(n, this.props.v, (value) => this.props.ar[this.props.i] = value);
+        return <input name={n} value={v } />;
     }
 });

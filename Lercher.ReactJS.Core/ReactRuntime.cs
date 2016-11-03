@@ -12,6 +12,8 @@ namespace Lercher.ReactJS.Core
     {
         const string STR_RenderToString = "renderToString";
         const string STR_RenderToStaticMarkup = "renderToStaticMarkup";
+        internal string Preprocessor = "noop";
+        internal string Postprocessor = "noop";
 
         /// <summary>
         /// A <see cref=" JsEnginePool"/> to allocate initialized ReactJS processors from.
@@ -64,6 +66,8 @@ namespace Lercher.ReactJS.Core
                     oldpool = (IDisposable)_ReactPool;
                     _ReactPool = cfg.GetReactPool();
                     watcher = cfg.Watcher;
+                    Preprocessor = cfg.PreprocessorFunction;
+                    Postprocessor = cfg.PostprocessorFunction;
                     if (watcher != null) watcher.StartNotify(this.Reconfigure);
                 }
             }
@@ -118,7 +122,7 @@ namespace Lercher.ReactJS.Core
             Contract.Assert(!string.IsNullOrEmpty(componentName), nameof(componentName) + " is null or empty.");
             Contract.Assert(model != null, nameof(model) + " is null.");
 
-            var expr = string.Format("PrepareReact(ReactDOMServer.{0}, {1})", reactDomServerMethodName, componentName);
+            var expr = string.Format("PrepareReact(ReactDOMServer.{0}, {1}, {2}, {3})", reactDomServerMethodName, componentName, Preprocessor, Postprocessor);
             dynamic result = engine.Evaluate(expr, model);
             var r = new ReactResult() { modelAsJson = result.modelAsJson, render = result.render };
             var disp = result as IDisposable;

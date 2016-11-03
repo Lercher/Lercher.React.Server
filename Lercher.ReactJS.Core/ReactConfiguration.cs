@@ -63,6 +63,17 @@ namespace Lercher.ReactJS.Core
         /// </summary>
         public Func<string, string> ScriptContentLoader = System.IO.File.ReadAllText;
 
+        /// <summary>
+        /// void JS function(model) that is called before React.createElement(). 'this' is bound to the <see cref="JsEngine.SetContext(object)"/>.
+        /// Defaults to "noop", which is the function that does nothing.
+        /// </summary>
+        public string PreprocessorFunction = "noop";
+
+        /// <summary>
+        /// void JS function(model) that is called after ReactDOMserver.renderTo...(). 'this' is bound to the <see cref="JsEngine.SetContext(object)"/>.
+        /// Defaults to "noop", which is the function that does nothing.
+        /// </summary>
+        public string PostprocessorFunction = "noop";
 
         /// <summary>
         /// Request Babel and ReactJS scripts from https://unpkg.com and freeze the two <see cref="ScriptLoader"/>s.
@@ -188,8 +199,9 @@ namespace Lercher.ReactJS.Core
             LoadExternalScripts();
             if (ReactPool == null)
             {
-                ReactPool = new JsEnginePool(ReactRepository);
-                ReactPool.Name = "ReactPool";
+                ReactPool = new JsEnginePool(ReactRepository) { 
+                    Name = "ReactPool"
+                };
             }
             return ReactPool;
         }

@@ -18,6 +18,8 @@ namespace Lercher.ReactJS.Host
 
             runtime = new ReactRuntime(cfg => {
                 cfg.WatchDirectory("../..", TimeSpan.FromSeconds(1));
+                cfg.PreprocessorFunction = "reactPreprocessor";
+                cfg.PostprocessorFunction = "reactPostprocessor";
             });
         }
 
@@ -54,6 +56,7 @@ namespace Lercher.ReactJS.Host
 
         private static IDictionary<string, string> ConvertToDictionary(IFormCollection form)
         {
+            if (form == null) return null;
             var r = new Dictionary<string, string>();
             foreach (var kv in form)
                 r[kv.Key] = kv.Value[0]; // won't accept multiple duplicate names!
