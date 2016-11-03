@@ -18,8 +18,15 @@ namespace Lercher.ReactJS.Host
             var url = "http://+:8182";
             using (WebApp.Start<Startup>(url))
             {
-                Console.WriteLine("\nListening on {0}/react. Press Enter to shut down ...\n", url.Replace("+", System.Environment.MachineName));
-                Console.ReadLine();
+                var sample = url.Replace("+", System.Environment.MachineName);
+                Console.WriteLine("\nListening on {0}/react. Press Enter to shut down, b to start a browser ...\n", sample);
+                while (true)
+                {
+                    var l = Console.ReadLine();
+                    if (string.IsNullOrEmpty(l)) break;
+                    if (l == "b")
+                        System.Diagnostics.Process.Start(sample + "/react");
+                }
             }
         }
 
