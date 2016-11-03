@@ -1,4 +1,6 @@
-﻿var global;
+﻿// infrastructure
+
+var global;
 
 function reactPreprocessor(model) {
     global = {
@@ -23,24 +25,26 @@ function action(name, current, change) {
     return value;
 }
 
+// react components
+
 var HelloWorld = React.createClass({
     render() {
         return (
             <form action="#" method="post">
-			    <div>
-			        Hello {this.props.name}!
-			        Not {this.props.name}? ... then enter your name: <input name="name" value={this.props.name } />. Is it {global.form.name}?
+                <div>
+                    Hello {this.props.name}!
+                    Not {this.props.name}? ... then enter your name: <input name="name" value={this.props.name } />. Is it {global.form.name}?
                     <Inner name={this.props.name} />
                     <br />
-			        {convertToJsArray(this.props.values).map((v, i, ar) =>
+                    {convertToJsArray(this.props.values).map((v, i, ar) =>
                         <InputBox v={v} i={i} ar={ar} />
                     )}
-			    </div>
+                </div>
                 <div>
                     <input type="submit" value="Submit" />
                 </div>
             </form>
-		);
+        );
     }
 });
 
