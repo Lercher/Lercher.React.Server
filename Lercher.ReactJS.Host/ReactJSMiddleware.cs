@@ -10,6 +10,7 @@ namespace Lercher.ReactJS.Host
     {
         private readonly PathString route;
         private readonly ReactRuntime runtime;
+        private readonly LsPosConnector con;
         private const string fn = "../../model.json";
 
         public ReactJSMiddleware(OwinMiddleware next) : base(next)
@@ -21,6 +22,9 @@ namespace Lercher.ReactJS.Host
                 cfg.PreprocessorFunction = "reactPreprocessor";
                 cfg.PostprocessorFunction = "reactPostprocessor";
             });
+
+            con = new LsPosConnector();
+            con.CreateChannel(); // to localhost
         }
 
         public async override Task Invoke(IOwinContext context)
@@ -35,6 +39,12 @@ namespace Lercher.ReactJS.Host
 
         private async Task ReactOn(IOwinContext context, PathString rest)
         {
+            if (rest.HasValue)
+            {
+                // var t = await con.View(rest.Value.Substring(1));
+                var i = await con.Data("76b2e78a-ea3b-4f14-a52a-2a859d56814d");
+                Console.WriteLine(i);
+            }
             Console.WriteLine("{0} React call: {1}", DateTime.Now, rest);
 
             IFormCollection form = null;
