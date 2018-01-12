@@ -43,6 +43,7 @@ namespace Lercher.ReactJS.Host
             {
                 // var t = await con.View(rest.Value.Substring(1));
                 var i = await con.Data("76b2e78a-ea3b-4f14-a52a-2a859d56814d");
+
                 Console.WriteLine(i);
             }
             Console.WriteLine("{0} React call: {1}", DateTime.Now, rest);
@@ -57,7 +58,7 @@ namespace Lercher.ReactJS.Host
                 var ng = new NamesGenerator(Guid.Empty, 1, engine.ScriptsHash);
                 engine.AddHostService("names", ng);
                 engine.SetContext(ConvertToDictionary(form));
-                var r = runtime.RenderToStaticMarkup("HelloWorld", modelJson, engine);
+                var r = runtime.RenderToString("HelloWorld", modelJson, engine);
                 context.Response.ContentType = "text/html";
                 context.Response.Write(r.render);
                 saveJson(r.modelAsJson);

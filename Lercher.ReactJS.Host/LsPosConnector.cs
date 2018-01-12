@@ -47,13 +47,13 @@ namespace Lercher.ReactJS.Host
 
         public async Task<string>View(string viewname)
         {
-            var req = new JsonRequest{ WebApplicationName = "/ScaniaPOS", Login = "SCAIntern", Typ ="view", Key = viewname, IsActive = true, P1 = "" }; // P1 = quickfind.
+            var req = new JsonRequest("view") { WebApplicationName = "/ScaniaPOS", Login = "SCAIntern", Key = viewname, IsActive = true, P1 = "" }; // P1 = quickfind.
             return await JsonAction(req);
         }
 
         public async Task<string> Data(string guid)
         {
-            var req = new JsonRequest { WebApplicationName = "/ScaniaPOS", Login = "SCAIntern", Typ = "data", Key = guid };
+            var req = new JsonRequest("data") { WebApplicationName = "/ScaniaPOS", Login = "SCAIntern", Key = guid };
             return await JsonAction(req);
         }
 
