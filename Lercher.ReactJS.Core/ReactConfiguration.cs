@@ -86,9 +86,12 @@ namespace Lercher.ReactJS.Core
             BabelLoader.AddUrl("https://unpkg.com/babel-standalone@{0}/babel.min.js", UseBabelVersion);
             BabelLoader.AddUrl("https://unpkg.com/babel-polyfill@{0}/dist/polyfill.min.js", UseBabelVersion);
 
-            ReactLoader.AddUrl("https://unpkg.com/react@{0}/dist/react.min.js", UseReactVersion);
-            ReactLoader.AddUrl("https://unpkg.com/react-dom@{0}/dist/react-dom.min.js", UseReactVersion);
-            ReactLoader.AddUrl("https://unpkg.com/react-dom@{0}/dist/react-dom-server.min.js", UseReactVersion);
+            // see https://unpkg.com/react/umd/ for a list
+            ReactLoader.AddUrl("https://unpkg.com/react@{0}/umd/react.production.min.js", UseReactVersion);
+            
+            // see https://unpkg.com/react-dom/umd/ for a list
+            ReactLoader.AddUrl("https://unpkg.com/react-dom@{0}/umd/react-dom.production.min.js", UseReactVersion);
+            ReactLoader.AddUrl("https://unpkg.com/react-dom@{0}/umd/react-dom-server.browser.production.min.js", UseReactVersion);
 
             BabelRepository = BabelLoader.GetRepository();
             BabelRepository.AddAssetResource("ArrayConverter.js"); // function convertToJsArray(host)

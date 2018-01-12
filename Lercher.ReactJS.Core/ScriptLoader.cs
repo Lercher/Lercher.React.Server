@@ -54,7 +54,14 @@ namespace Lercher.ReactJS.Core
         {
             var seq = e.UserState as int?;
             var client = sender as WebClient;
-            ScriptRepository.AddScriptContent(e.Result, client.BaseAddress, seq.Value);
+            try
+            {
+                ScriptRepository.AddScriptContent(e.Result, client.BaseAddress, seq.Value);
+            }
+            catch(Exception ex)
+            {
+                throw new ApplicationException(string.Format("Error laoding {0}", client.BaseAddress), ex);
+            }
             client.DownloadStringCompleted -= Client_DownloadStringCompleted;
             client.Dispose();
             cd.Signal();
